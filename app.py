@@ -14,17 +14,18 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 # app.config["CORS_HEADERS"] = "Content-Type"
 # CORS(app)
 
+
 def check_which_page(username: str):
     sqlfetch = """SELECT * from users WHERE name=?"""
     cur = conn.cursor()
-    cur.execute(sqlfetch, (username, ))
+    cur.execute(sqlfetch, (username,))
     rep = cur.fetchall()
     if rep[0].uuid == request.cookies.get("userID"):
         return redirect("/my_page")
     return redirect("/profile")
 
 
-#TODO add better validation rules ?
+# TODO add better validation rules ?
 def valid_password(password: str) -> bool:
     if len(password) < 8:
         return False
@@ -35,7 +36,7 @@ def valid_password(password: str) -> bool:
     return True
 
 
-#TODO check email properly
+# TODO check email properly
 def valid_email(email: str) -> bool:
     # if len(password) > 8:
     return True
@@ -46,7 +47,7 @@ def valid_username(user: str) -> bool:
     # if len(password) > 8:
     sqlfetch = """SELECT * from users WHERE name=?"""
     cur = conn.cursor()
-    cur.execute(sqlfetch, (user, ))
+    cur.execute(sqlfetch, (user,))
     rep = cur.fetchall()
     if rep or len(user) < 1:
         # flash("This username is already taken")
@@ -59,7 +60,7 @@ def is_connected(uuid: str) -> bool:
         print(uuid)
         sqlfetch = """SELECT * from users WHERE uuid=?"""
         cur = conn.cursor()
-        cur.execute(sqlfetch, (uuid, ))
+        cur.execute(sqlfetch, (uuid,))
         rep = cur.fetchall()
         if rep:
             return True
@@ -111,6 +112,7 @@ def change_userpassword():
     cur.execute(sqlup, (password, uuid))
     conn.commit()
 
+
 @app.route("/change_username", methods=["GET, POST"])
 def change_username():
     uuid = request.cookies.get("userID")
@@ -145,6 +147,7 @@ def logout():
     conn.commit()
     return render_template("index.html")
 
+
 @cross_origin()
 @app.route("/")
 def hello():
@@ -154,7 +157,8 @@ def hello():
     return render_template("homepage.html", is_logged="True")
 
 
-#TODO error handling for signup 
+# TODO error handling for signup
+
 
 @app.route("/signup", methods=["POST", "GET"])
 @cross_origin()
@@ -169,29 +173,29 @@ def signup():
     # email = request.get_json().get("email")
     name = request.form["name"]
     password = request.form["password"]
-        # email = request.form["email"]
+    # email = request.form["email"]
     print(request)
     if not (valid_password(password) and valid_email(email) and valid_username(name)):
-            # flash("This username is already taken")
-            return render_template("signup.html", error="error")
-            # return dict("Error", "invalid something")
-        # return jsonify({"status": "ko", "data": "fail"})
+        # flash("This username is already taken")
+        return render_template("signup.html", error="error")
+        # return dict("Error", "invalid something")
+    # return jsonify({"status": "ko", "data": "fail"})
     conf_uuid = str(uuid.uuid4())
     sql = """ INSERT INTO users(name, email, password, confirmed, conf_uuid) VALUES(?,?,?,?,?) """
-        # sql = """ INSERT INTO users(name, email, password) VALUES(?,?,?) """
+    # sql = """ INSERT INTO users(name, email, password) VALUES(?,?,?) """
     cur = conn.cursor()
     user = (name, email, password, False, conf_uuid)
-        # user = (name, email, password)
+    # user = (name, email, password)
     cur.execute(sql, user)
     conn.commit()
-        # msg = Message(
-        #     "Welcome to camagru",
-        #     recipients=[email],
-        #     html=render_template('email_conf_register.html', confirm_url="http://localhost:5000/" + conf_uuid),
-        #     sender=app.config['MAIL_DEFAULT_SENDER']
-        # )
-        # mail.send(msg)
-        # return (dict("Valid", True))
+    # msg = Message(
+    #     "Welcome to camagru",
+    #     recipients=[email],
+    #     html=render_template('email_conf_register.html', confirm_url="http://localhost:5000/" + conf_uuid),
+    #     sender=app.config['MAIL_DEFAULT_SENDER']
+    # )
+    # mail.send(msg)
+    # return (dict("Valid", True))
     # return jsonify({"status": "ok", "data": "ok"})
     return render_template("success_signup.html", email=email)
     # render_template("signup.html")
@@ -203,7 +207,7 @@ def send_email():
         return render_template("send_email.html")
     email = request.form["email"]
     print(request)
-    if not valid_email(email) :
+    if not valid_email(email):
         return render_template("send_email.html", error="error: invalid email")
     # msg = Message(
     #     "Welcome to camagru",
@@ -216,8 +220,8 @@ def send_email():
     msg.subject = "Email Subject"
     msg.recipients = [email]
     # msg.sender = '42projectbdb@gmail.com'
-    msg.sender = 'percevallechat@yahoo.com'
-    msg.body = 'Email body'
+    msg.sender = "percevallechat@yahoo.com"
+    msg.body = "Email body"
     mail.send(msg)
     return render_template("success_signup.html", email=email)
 
@@ -250,14 +254,14 @@ def login():
 
 
 if __name__ == "__main__":
-    
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
+
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_PORT"] = 465
+    app.config["MAIL_USE_SSL"] = True
     # app.config['MAIL_USERNAME'] = "42projectbdb@gmail.com"
     # app.config['MAIL_PASSWORD'] = "bebeIvitch13/"
-    app.config['MAIL_USERNAME'] = "percevallechat@yahoo.com"
-    app.config['MAIL_PASSWORD'] = "Ivitch13/"
+    app.config["MAIL_USERNAME"] = "percevallechat@yahoo.com"
+    app.config["MAIL_PASSWORD"] = "Ivitch13/"
     mail = Mail(app)
     if not os.path.isfile("test.sqlite"):
         conn = sqlite3.connect("test.sqlite", check_same_thread=False)

@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request, url_for, redirect, make_response, flash
-# Mail, Message
+from flask import Flask, render_template, request, url_for, redirect, make_response
 import sqlite3
 from sqlite3 import Error
 import os
 import uuid
+from flask_cors import CORS, cross_origin
+from flask_mail import Mail, Message
+
 
 app = Flask(__name__)
 conn = None
 
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+# app.config["CORS_HEADERS"] = "Content-Type"
+# CORS(app)
 
 def check_which_page(username: str):
     sqlfetch = """SELECT * from users WHERE name=?"""
@@ -140,34 +145,45 @@ def logout():
     conn.commit()
     return render_template("index.html")
 
-
+@cross_origin()
 @app.route("/")
 def hello():
     # if is_connected(request.cookies.get("userID"), ""):
     #     return redirect("/home")
-    return render_template("index.html")
+    # return render_template("index.html")
+    return render_template("homepage.html", is_logged="True")
 
 
 #TODO error handling for signup 
+
 @app.route("/signup", methods=["POST", "GET"])
+@cross_origin()
 def signup():
     # if is_connected(request.cookies.get("userID"), ""):
     #     return redirect("/home")
-    if request.method == "POST":
-        name = request.form["name"]
-        password = request.form["password"]
-        email = request.form["email"]
-        if not (valid_password(password) and valid_email(email) and valid_username(name)):
+    if request.method == "GET":
+        return render_template("signup.html")
+        # data = request.get_json().get("test")
+    # name = request.get_json().get("name")
+    # password = request.get_json().get("password")
+    # email = request.get_json().get("email")
+    name = request.form["name"]
+    password = request.form["password"]
+        # email = request.form["email"]
+    print(request)
+    if not (valid_password(password) and valid_email(email) and valid_username(name)):
             # flash("This username is already taken")
-            return render_template("signup.html")
-        conf_uuid = str(uuid.uuid4())
-        sql = """ INSERT INTO users(name, email, password, confirmed, conf_uuid) VALUES(?,?,?,?,?) """
+            return render_template("signup.html", error="error")
+            # return dict("Error", "invalid something")
+        # return jsonify({"status": "ko", "data": "fail"})
+    conf_uuid = str(uuid.uuid4())
+    sql = """ INSERT INTO users(name, email, password, confirmed, conf_uuid) VALUES(?,?,?,?,?) """
         # sql = """ INSERT INTO users(name, email, password) VALUES(?,?,?) """
-        cur = conn.cursor()
-        user = (name, email, password, False, conf_uuid)
+    cur = conn.cursor()
+    user = (name, email, password, False, conf_uuid)
         # user = (name, email, password)
-        cur.execute(sql, user)
-        conn.commit()
+    cur.execute(sql, user)
+    conn.commit()
         # msg = Message(
         #     "Welcome to camagru",
         #     recipients=[email],
@@ -175,9 +191,35 @@ def signup():
         #     sender=app.config['MAIL_DEFAULT_SENDER']
         # )
         # mail.send(msg)
+        # return (dict("Valid", True))
+    # return jsonify({"status": "ok", "data": "ok"})
+    return render_template("success_signup.html", email=email)
+    # render_template("signup.html")
 
-        return render_template("success_signup.html", email=email)
-    return render_template("signup.html")
+
+@app.route("/send_email", methods=["POST", "GET"])
+def send_email():
+    if request.method == "GET":
+        return render_template("send_email.html")
+    email = request.form["email"]
+    print(request)
+    if not valid_email(email) :
+        return render_template("send_email.html", error="error: invalid email")
+    # msg = Message(
+    #     "Welcome to camagru",
+    #     recipients=[email],
+    #     html=render_template('email_conf_register.html', confirm_url="http://localhost:5000/"),
+    #     sender=app.config['MAIL_DEFAULT_SENDER']
+    # )
+
+    msg = Message()
+    msg.subject = "Email Subject"
+    msg.recipients = [email]
+    # msg.sender = '42projectbdb@gmail.com'
+    msg.sender = 'percevallechat@yahoo.com'
+    msg.body = 'Email body'
+    mail.send(msg)
+    return render_template("success_signup.html", email=email)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -208,12 +250,15 @@ def login():
 
 
 if __name__ == "__main__":
-    # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    # app.config['MAIL_PORT'] = 465
-    # app.config['MAIL_USE_SSL'] = True
-    # app.config['MAIL_USERNAME'] = "username@gmail.com"
-    # app.config['MAIL_PASSWORD'] = "password"
-    # mail = Mail(app)
+    
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USE_SSL'] = True
+    # app.config['MAIL_USERNAME'] = "42projectbdb@gmail.com"
+    # app.config['MAIL_PASSWORD'] = "bebeIvitch13/"
+    app.config['MAIL_USERNAME'] = "percevallechat@yahoo.com"
+    app.config['MAIL_PASSWORD'] = "Ivitch13/"
+    mail = Mail(app)
     if not os.path.isfile("test.sqlite"):
         conn = sqlite3.connect("test.sqlite", check_same_thread=False)
         c = conn.cursor()
@@ -225,4 +270,3 @@ if __name__ == "__main__":
     else:
         conn = sqlite3.connect("test.sqlite", check_same_thread=False)
     app.run()
-    

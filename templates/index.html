@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- // Download jquery -->
+ <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
     <title>Bootstrap 5 Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,12 +13,28 @@
       <h1>Hello</h1>
       <p class="text-white-50 bg-dark">Test</p>
     </div>
-    <script>
-      alert( 'Hello, world!' );
-    </script>
+    <!-- <script>
+      // alert( 'Hello, world!' );
+    </script> -->
     <!-- <button onclick="window.location='signin';">sign in</button> -->
     <!-- <button onclick="window.location='signup';">sign up</button> -->
-    <a class="nav-item nav-link" id="signUp" href="/signup">Sign Up</a>
+    <!-- <a class="nav-item nav-link" id="signUp" href="/signup">Sign Up</a> -->
+    <a class="nav-item nav-link" id="signUp" href="http://localhost:5000/signup">Sign Up</a>
+    <!-- <button type="signup" id="Signup">Signup</button> -->
     <a class="nav-item nav-link" id="logIn" href="/login">join</a>
+    <!-- <script>
+        $(document).ready(function(){
+                      $("#Signup").click(function(){
+                          console.log("toto");
+                          $.ajax({
+                              url: "http://127.0.0.1:5000/signup",
+                              type: "GET",
+                              contentType: 'application/json',
+                          }).done(function() {
+                          })
+                      }
+                      )}
+                  );
+      </script> -->
   </body>
 </html>

@@ -1,6 +1,5 @@
-import bcrypt from 'bcrypt'
-// or
-// const bcrypt = require('bcrypt')
+
+
 function encrypt(password) {
     bcrypt.hash(password, 2, (err, hash) => {
         if (err) {
@@ -12,11 +11,8 @@ function encrypt(password) {
     return hash
   }
 
-form.addEventListener('submit', (e) => {
-      console.log("hello from script")
-      let messages = []
-      const name = document.getElementById('name').value
-      const password = document.getElementById('password').value
+function validate_form(name, password){
+  
       // const form = document.getElementById('form').value
       // const rounds = 2
 
@@ -51,4 +47,5 @@ form.addEventListener('submit', (e) => {
           // 'email':email
       });
       xml.send(dataSend);
-    })
+    }
+export {validate_form};

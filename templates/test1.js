@@ -1,4 +1,4 @@
-import {validate_form} from "./encrypt_pw.js";
+import {validate_form as validate_form} from "./encrypt_pw.js";
 
 form.addEventListener('submit', (e) => {
     console.log("hello from script")

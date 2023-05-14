@@ -3,11 +3,14 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.2.0/bcrypt.min.js"></script>
+
+  <script type="module"> import aleaGenerator from 'https://cdn.jsdelivr.net/npm/alea-generator@1.0.0/+esm' </script>
 </head>
 <body>
   <div id="error">{{error}}</div>
   <div>
-    <form id="form" action="/" method="GET">
+    <form id="form">
         <label>Name</label><input name="name" type="text" id='name' required />
         <label>password</label><input name="password" type="text" id="password" required/>
         <!-- <label>email</label><input name="email" type="text" required/> -->

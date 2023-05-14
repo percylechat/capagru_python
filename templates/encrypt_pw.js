@@ -1,4 +1,4 @@
-
+import bcrypt from './node_modules/bcrypt'
 
 function encrypt(password) {
     bcrypt.hash(password, 2, (err, hash) => {

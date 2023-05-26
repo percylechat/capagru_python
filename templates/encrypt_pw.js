@@ -36,8 +36,10 @@ function validate_form(name, password){
       // }
       // console.log(hash)
       // })
-      var hash = encrypt(password);
-      console.log("hello from script");
+      // var hash = encrypt(password);
+      console.log("hello from check");
+      console.log("name", name);
+      console.log("password", password);
       // const errorElement = document.getElementById('error')
       // console.log("test", name, document.forms)
       if (name === '' || name == null) {
@@ -51,14 +53,45 @@ function validate_form(name, password){
       //   errorElement.innerText = messages.join(', ')
       // }
 
-      var xml = new XMLHttpRequest();
-      xml.open("POST","/signup"); 
-      xml.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-      var dataSend= JSON.stringify({
-          'name':name,
-          'password':hash,
-          // 'email':email
-      });
-      xml.send(dataSend);
+
+
+      let url = "http://127.0.0.1:5000/signup";
+      function newRequest() {
+          var client = new XMLHttpRequest();
+          client.onreadystatechange = function() {
+              console.log("readystate", this.readyState) // should be 4
+              console.log("status", this.status) // should be 200 OK
+              console.log("response", this.responseText) // response return from request
+          };
+          client.open("POST", url, true);
+          client.setRequestHeader("Content-Type", "application/json");
+          var dataSend= JSON.stringify({
+            'name':name,
+            'password':password,
+            // 'email':email
+        });
+          client.send(dataSend);
+          console.log("status", client.status);
+      }
+      newRequest();
+
+
+      // var xml_ = new XMLHttpRequest();
+      // xml_.open("GET","http://127.0.0.1:5000/signup", true); 
+      // xml_.setRequestHeader("Content-type","application/json");
+      // var dataSend= JSON.stringify({
+      //     'name':name,
+      //     'password':password,
+      //     // 'email':email
+      // });
+      // xml_.send(dataSend);
+      console.log("we are done");
+      // xml_.onload = function() {
+      //   if (xhr.status != 200) { // analyse l'état HTTP de la réponse
+      //     alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+      //   } else { // show the result
+      //     alert(`Done, got ${xhr.response.length} bytes`); // response est la réponse du serveur
+      //   }
+      // };
     }
     export {validate_form};

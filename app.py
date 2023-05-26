@@ -160,21 +160,22 @@ def hello():
 # TODO error handling for signup
 
 
-@app.route("/signup", methods=["POST", "GET"])
 @cross_origin()
+@app.route("/signup", methods=["POST", "GET"])
 def signup():
     # if is_connected(request.cookies.get("userID"), ""):
     #     return redirect("/home")
     if request.method == "GET":
         return render_template("signup.html")
         # data = request.get_json().get("test")
-    # name = request.get_json().get("name")
-    # password = request.get_json().get("password")
+    name = request.get_json().get("name")
+    password = request.get_json().get("password")
     # email = request.get_json().get("email")
-    name = request.form["name"]
-    password = request.form["password"]
+    # name = request.form["name"]
+    # password = request.form["password"]
     # email = request.form["email"]
     print(request)
+    print(name, password)
     if not (valid_password(password) and valid_email(email) and valid_username(name)):
         # flash("This username is already taken")
         return render_template("signup.html", error="error")

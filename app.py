@@ -260,9 +260,9 @@ if __name__ == "__main__":
     app.config["MAIL_PORT"] = 465
     app.config["MAIL_USE_SSL"] = True
     # app.config['MAIL_USERNAME'] = "42projectbdb@gmail.com"
-    # app.config['MAIL_PASSWORD'] = "bebeIvitch13/"
+    # app.config['MAIL_PASSWORD'] = ""
     app.config["MAIL_USERNAME"] = "percevallechat@yahoo.com"
-    app.config["MAIL_PASSWORD"] = "Ivitch13/"
+    app.config["MAIL_PASSWORD"] = ""
     mail = Mail(app)
     if not os.path.isfile("test.sqlite"):
         conn = sqlite3.connect("test.sqlite", check_same_thread=False)
